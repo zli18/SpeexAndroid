@@ -29,7 +29,6 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/native-lib.cpp
              src/main/cpp/echo_canceller.cpp
              src/main/cpp/libspeex/bits.c
              src/main/cpp/libspeex/buffer.c

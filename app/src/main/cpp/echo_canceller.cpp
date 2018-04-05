@@ -1,8 +1,18 @@
+#include <jni.h>
+#include <string>
+
 #include "echo_canceller.h"
 SpeexEchoState *st;
 SpeexPreprocessState *den;
 
-JNIEXPORT void JNICALL Java_speex_EchoCanceller_open
+extern "C" JNIEXPORT jstring JNICALL Java_com_nfx_speexandroid_MainActivity_stringFromJNI(
+        JNIEnv *env,
+        jobject /* this */) {
+    std::string hello = "Hello from C++";
+    return env->NewStringUTF(hello.c_str());
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_nfx_speexandroid_MainActivity_open
   (JNIEnv *env, jobject jObj, jint jSampleRate, jint jBufSize, jint jTotalSize)
 {
      int sampleRate=jSampleRate;
@@ -14,7 +24,7 @@ JNIEXPORT void JNICALL Java_speex_EchoCanceller_open
      //speex_preprocess_ctl(den, SPEEX_PREPROCESS_SET_DEREVERB, st);
 }
 
-JNIEXPORT jshortArray JNICALL Java_speex_EchoCanceller_process
+extern "C" JNIEXPORT jshortArray JNICALL Java_com_nfx_speexandroid_MainActivity_process
   (JNIEnv * env, jobject jObj, jshortArray input_frame, jshortArray echo_frame)
 {
   //create native shorts from java shorts
@@ -44,7 +54,7 @@ JNIEXPORT jshortArray JNICALL Java_speex_EchoCanceller_process
 }
 
 
-JNIEXPORT void JNICALL Java_speex_EchoCanceller_playback
+extern "C" JNIEXPORT void JNICALL Java_com_nfx_speexandroid_MainActivity_playback
   (JNIEnv *env, jobject jObj, jshortArray echo_frame)
 {
     jshort *native_echo_frame = env->GetShortArrayElements(echo_frame, 0);
@@ -52,7 +62,7 @@ JNIEXPORT void JNICALL Java_speex_EchoCanceller_playback
     env->ReleaseShortArrayElements(echo_frame, native_echo_frame, 0);
 }
 
-JNIEXPORT jshortArray JNICALL Java_speex_EchoCanceller_capture
+extern "C" JNIEXPORT jshortArray JNICALL Java_com_nfx_speexandroid_MainActivity_capture
   (JNIEnv *env, jobject jObj, jshortArray input_frame)
 {
     env->MonitorEnter(jObj);
@@ -74,11 +84,11 @@ JNIEXPORT jshortArray JNICALL Java_speex_EchoCanceller_capture
     return output_shorts;
 }
 
-JNIEXPORT void JNICALL Java_speex_EchoCanceller_reset(JNIEnv *env, jobject jObj) {
+extern "C" JNIEXPORT void JNICALL Java_com_nfx_speexandroid_MainActivity_reset(JNIEnv *env, jobject jObj) {
     speex_echo_state_reset(st);    
 }
 
-JNIEXPORT void JNICALL Java_speex_EchoCanceller_close
+extern "C" JNIEXPORT void JNICALL Java_com_nfx_speexandroid_MainActivity_close
   (JNIEnv *env, jobject jObj)
 {
      speex_echo_state_destroy(st);
