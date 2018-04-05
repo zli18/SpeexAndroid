@@ -44,4 +44,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
+    compile 'org.jetbrains.anko:anko-common:0.10.3'
 }

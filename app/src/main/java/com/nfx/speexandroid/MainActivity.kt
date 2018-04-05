@@ -4,6 +4,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.io.IOUtils
+import org.jetbrains.anko.ctx
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -27,20 +30,27 @@ class MainActivity : AppCompatActivity() {
         var mixed_short_array = ShortArray(mixed_array.size / 2)
         ByteBuffer.wrap(mixed_array).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(mixed_short_array)
 
-        val NN = 1024
-        val TAIL = 4096
-        open(44100, NN, TAIL)
+        doAsync {
+            val NN = 1024
+            val TAIL = 4096
+            open(44100, NN, TAIL)
 
-        val frameNum = mixed_short_array.size / NN
-        var result = mutableListOf<Short>()
-        for (frame in 0 until frameNum) {
-            val input_frame = mixed_short_array.copyOfRange(frame * NN, (frame + 1) * NN)
-            val echo_frame = echo_short_array.copyOfRange(frame * NN, (frame + 1) * NN)
-            val list = process(input_frame, echo_frame).toList()
-            result.addAll(list)
+            val frameNum = mixed_short_array.size / NN
+            var result = mutableListOf<Short>()
+            for (frame in 0 until frameNum) {
+                val input_frame = mixed_short_array.copyOfRange(frame * NN, (frame + 1) * NN)
+                val echo_frame = echo_short_array.copyOfRange(frame * NN, (frame + 1) * NN)
+                val list = process(input_frame, echo_frame).toList()
+                result.addAll(list)
+            }
+            writeAudioDataToFile(result.toShortArray())
+
+            uiThread {
+                val player = AudioTrackPlayer()
+                player.prepare(File(ctx.filesDir, "voice.pcm").path)
+                player.play()
+            }
         }
-
-        writeAudioDataToFile(result.toShortArray())
     }
 
 
