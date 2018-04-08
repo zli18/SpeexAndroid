@@ -1,3 +1,3 @@
 # SpeexAndroid
 
-Android porting of Speex https://www.speex.org
+Android porting of Acoustic Echo Cancellation in Speex https://www.speex.org
